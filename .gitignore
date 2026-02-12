@@ -1,6 +1,6 @@
 # Dependencies
 node_modules/
-studio/node_modules/
+studio/
 
 # Next.js
 .next/
