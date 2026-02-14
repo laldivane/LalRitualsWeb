@@ -140,6 +140,7 @@ export default function RitualPlayer({ ritual }: RitualPlayerProps) {
           <button 
             onClick={togglePlay}
             className="relative flex h-16 w-16 items-center justify-center rounded-full border border-crimson/30 hover:border-crimson hover:bg-crimson/10 transition-all duration-500 group/btn"
+            aria-label={isBuffering ? "Buffering" : isPlaying ? "Stop transmission" : "Play transmission"}
           >
             <AnimatePresence mode="wait">
               {isBuffering ? (
@@ -173,6 +174,7 @@ export default function RitualPlayer({ ritual }: RitualPlayerProps) {
                   value={progress}
                   onChange={handleSeek}
                   className="absolute inset-x-0 -top-1 z-30 w-full h-4 opacity-0 cursor-pointer"
+                  aria-label="Seek transmission"
                 />
                 <div className="h-2 w-full bg-black/40 border border-white/5 rounded-full overflow-hidden relative">
                    <motion.div 

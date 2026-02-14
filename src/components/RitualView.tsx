@@ -19,7 +19,7 @@ export default function RitualView({ ritual }: { ritual: Ritual }) {
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <Image
           src={ritual.coverImage}
-          alt=""
+          alt={`Atmospheric background for ${ritual.title}`}
           fill
           className="object-cover opacity-10 scale-125 blur-[120px]"
           priority

@@ -21,12 +21,13 @@ export interface LyricLine {
 }
 
 export interface Ritual {
-  id: string;
+  id?: string;
+  _id?: string;
   title: string;
-  slug: string;
+  slug: any;
   releaseDate: string;
   description: string;
-  coverImage: string;
+  coverImage: any;
   emotionalPhase: EmotionalPhase;
   audioUrl?: string;
   ritualText: string[];
@@ -36,10 +37,21 @@ export interface Ritual {
 }
 
 export interface LoreNode {
-  id: string;
+  id?: string;
+  _id?: string;
   title: string;
   content: string[];
   constellation: Constellation;
   timestamp: string;
   connections: string[];
+}
+
+export interface Settings {
+  title: string;
+  description: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  systemStatus: string;
+  socialLinks: { platform: string; url: string }[];
+  menuItems: { label: string; url: string }[];
 }

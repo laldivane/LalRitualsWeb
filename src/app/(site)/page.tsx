@@ -7,10 +7,12 @@ import { useState, useEffect } from "react";
 import { client } from "@/sanity/lib/client";
 import { loreNodesQuery, settingsQuery } from "@/sanity/lib/queries";
 
+import { Settings, LoreNode } from '@/lib/types';
+
 export default function Home() {
   const [activeSection, setActiveSection] = useState('hero');
-  const [settings, setSettings] = useState<any>(null);
-  const [loreNodes, setLoreNodes] = useState<any[]>([]);
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [loreNodes, setLoreNodes] = useState<LoreNode[]>([]);
   
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -70,7 +72,8 @@ export default function Home() {
           <button
             key={id}
             onClick={() => scrollTo(id)}
-            className="group relative flex items-center justify-center h-4 w-4"
+            className="group relative flex items-center justify-center h-10 w-10"
+            aria-label={`Scroll to ${id} section`}
           >
             <motion.div
               animate={{ 
@@ -78,7 +81,7 @@ export default function Home() {
                 scale: activeSection === id ? 1.5 : 1
               }}
               transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
-              className={`absolute inset-0 border rounded-full transition-colors duration-500 ${
+              className={`absolute inset-0 border rounded-full transition-colors duration-500 m-3 ${
                 activeSection === id ? 'border-crimson shadow-[0_0_10px_#c0003f]' : 'border-white/10 group-hover:border-white/30'
               }`}
               style={{ padding: '2px' }}
@@ -88,7 +91,7 @@ export default function Home() {
                 </div>
             </motion.div>
             
-            <span className={`absolute right-8 text-[8px] tracking-[0.3em] uppercase font-terminal transition-all duration-500 whitespace-nowrap opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 ${
+            <span className={`absolute right-12 text-[8px] tracking-[0.3em] uppercase font-terminal transition-all duration-500 whitespace-nowrap opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 ${
               activeSection === id ? 'text-crimson opacity-100' : 'text-muted'
             }`}>
               {id}_protocol
@@ -147,18 +150,20 @@ export default function Home() {
           </motion.div>
         </div>
 
-        <motion.div 
+        <motion.button 
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-crimson/40 cursor-pointer"
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-crimson/40 cursor-pointer p-4 min-w-[44px] min-h-[44px] flex items-center justify-center"
           onClick={() => scrollTo('lore')}
+          aria-label="Scroll to Lore section"
         >
           <ArrowDown size={24} />
-        </motion.div>
+        </motion.button>
       </section>
 
       {/* ─── LORE SECTION (DYNAMIC) ─── */}
-      <section id="lore" className="relative min-h-screen py-32 w-full flex items-center justify-center overflow-hidden border-t border-white/5">
+      <section id="lore" className="relative min-h-screen py-32 w-full flex flex-col items-center justify-center overflow-hidden border-t border-white/5">
+         <h2 className="sr-only">Lore Fragments</h2>
          <div className="layout-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
             {(loreNodes.length > 0 ? loreNodes : []).map((lore, index) => (
                 <LoreCard 
