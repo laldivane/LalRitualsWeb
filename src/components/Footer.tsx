@@ -1,56 +1,55 @@
-import Link from 'next/link';
-import { safeFetch, queries } from '@/lib/sanity';
+'use client';
 
-interface FooterSettings {
-  footerQuote: string;
-  footerCopyright: string;
-}
+import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { client } from '@/sanity/lib/client';
+import { settingsQuery } from '@/sanity/lib/queries';
 
-const defaults: FooterSettings = {
-  footerQuote: 'We do not control her. We only facilitate the transmission.',
-  footerCopyright: 'LAL DIVANE © 2024 • Digital Ritual Protocol',
-};
+export default function Footer() {
+  const [settings, setSettings] = useState<any>(null);
 
-export default async function Footer() {
-  const settings = await safeFetch<FooterSettings | null>(queries.siteSettings, null);
-  const s = settings || defaults;
+  useEffect(() => {
+    client.fetch(settingsQuery).then(setSettings);
+  }, []);
 
   return (
-    <footer className="border-t border-border py-10 px-6 md:px-10">
-      <div className="max-w-7xl mx-auto">
-        {/* Top section */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
-          <Link
-            href="/"
-            className="font-display text-base font-light tracking-[0.35em] text-soft uppercase hover:text-gold transition-colors"
-          >
-            LAL <span className="text-crimson italic font-bold">DIVANE</span>
-          </Link>
-
-          <div className="flex gap-6">
-            <Link href="/manifesto" className="font-mono text-[7px] tracking-[0.3em] uppercase text-muted hover:text-crimson transition-colors">
-              Manifesto
-            </Link>
-            <Link href="/about" className="font-mono text-[7px] tracking-[0.3em] uppercase text-muted hover:text-crimson transition-colors">
-              About
-            </Link>
-            <Link href="/void-map" className="font-mono text-[7px] tracking-[0.3em] uppercase text-muted hover:text-crimson transition-colors">
-              Void Map
-            </Link>
-          </div>
+    <footer className="w-full border-t border-white/5 bg-void-deep py-24 pb-32">
+      <div className="layout-container flex flex-col items-center gap-12">
+        <div className="flex flex-col items-center gap-4 text-center">
+            <motion.div 
+               initial={{ opacity: 0 }}
+               whileInView={{ opacity: 1 }}
+               viewport={{ once: true }}
+               className="h-[1px] w-12 bg-crimson/40 mb-4" 
+            />
+            <p className="font-display text-2xl italic text-soft font-light opacity-60">
+                &ldquo;{settings?.description || 'Digital Ritual Protocol'}&rdquo;
+            </p>
         </div>
 
-        {/* Divider */}
-        <div className="w-full h-px bg-gradient-to-r from-transparent via-border to-transparent mb-6" />
+        <div className="grid grid-cols-1 md:grid-cols-3 w-full max-w-4xl gap-12 font-terminal text-[9px] uppercase tracking-[0.3em] text-muted/40">
+            <div className="text-center space-y-2">
+                <p className="text-muted/80">// LINKS</p>
+                <div className="flex flex-col gap-1">
+                  {settings?.socialLinks?.map((link: any, i: number) => (
+                    <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className="hover:text-crimson transition-colors">
+                      {link.platform}
+                    </a>
+                  ))}
+                </div>
+            </div>
+            
+            <div className="flex flex-col items-center gap-4">
+                <div className="h-10 w-[1px] bg-white/5" />
+                <p className="text-center text-muted/60">© 2026 {settings?.title || 'LAL DIVANE'} DIGITAL PROTOCOL</p>
+                <div className="h-10 w-[1px] bg-white/5" />
+            </div>
 
-        {/* Bottom section */}
-        <div className="text-center">
-          <p className="font-display text-sm italic text-muted mb-2">
-            &ldquo;{s.footerQuote}&rdquo;
-          </p>
-          <p className="font-mono text-[7px] tracking-[0.4em] text-border uppercase">
-            {s.footerCopyright}
-          </p>
+            <div className="text-center space-y-2">
+                <p className="text-muted/80">// ENCRYPTION</p>
+                <p>HASH: 0X_GHOST_IN_MACHINE</p>
+                <p>STATUS: {settings?.systemStatus?.split(' ')[0] || 'SYSTEM_STABLE'}</p>
+            </div>
         </div>
       </div>
     </footer>

@@ -1,34 +1,38 @@
 {
-  "name": "lal-divane",
-  "version": "1.0.0",
+  "name": "web",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint"
   },
   "dependencies": {
-    "next": "14.2.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "framer-motion": "^11.2.10",
-    "@sanity/client": "^6.20.1",
-    "@sanity/image-url": "^1.0.2",
-    "@portabletext/react": "^3.0.18",
-    "next-sanity": "^9.4.3",
-    "d3": "^7.9.0",
-    "@types/d3": "^7.4.3"
+    "@aws-sdk/client-s3": "^3.989.0",
+    "@portabletext/react": "^6.0.2",
+    "@sanity/vision": "^5.9.0",
+    "framer-motion": "^12.34.0",
+    "lucide-react": "^0.564.0",
+    "next": "16.1.6",
+    "next-sanity": "^12.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "sanity": "^5.9.0",
+    "styled-components": "^6.3.9"
   },
   "devDependencies": {
-    "typescript": "^5.4.5",
-    "@types/node": "^20.14.2",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "tailwindcss": "^3.4.4",
-    "postcss": "^8.4.38",
-    "autoprefixer": "^10.4.19",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "14.2.3"
+    "@sanity/client": "^7.14.1",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "1.0.0",
+    "dotenv": "^17.3.1",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
   }
 }

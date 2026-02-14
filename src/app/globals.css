@@ -1,31 +1,85 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
+@theme {
+  --color-crimson: #c0003f;
+  --color-crimson-light: #ff0055;
+  --color-void-deep: #0a0005;
+  --color-void-card: #14080e;
+  --color-soft: #f0e2d4;
+  --color-muted: #8a7a7a;
+  --color-border-dark: #2a1a1f;
   
-  body {
-    font-family: var(--font-mono);
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
-  }
+  --font-display: 'Cormorant Garamond', serif;
+  --font-terminal: 'Share Tech Mono', monospace;
 }
 
-@layer utilities {
-  .text-shadow-glow {
-    text-shadow: 0 0 20px rgba(192, 0, 63, 0.6);
-  }
+:root {
+  --background: #0a0005;
+  --foreground: #f0e2d4;
+  --crimson-glow: 0 0 20px rgba(192, 0, 63, 0.3);
+}
 
-  .text-shadow-strong {
-    text-shadow: 0 4px 40px rgba(0, 0, 0, 0.9);
-  }
+body {
+  @apply bg-void-deep text-soft font-terminal antialiased overflow-x-hidden;
+  min-height: 100vh;
+}
 
-  .bg-grain {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-  }
+body::before {
+  content: "";
+  @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.03];
+  background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+}
+
+.layout-container {
+  @apply max-w-[1200px] mx-auto px-8 w-full;
+}
+
+.glass-panel {
+  @apply bg-void-card/40 backdrop-blur-md border border-border-dark;
+}
+
+.terminal-btn {
+  @apply relative px-8 py-3 border border-crimson/40 text-crimson font-terminal text-[10px] uppercase tracking-[0.3em] overflow-hidden transition-all duration-500 hover:border-crimson hover:text-white hover:shadow-[0_0_15px_rgba(192,0,63,0.4)];
+}
+
+.terminal-btn::before {
+  content: "";
+  @apply absolute inset-0 bg-crimson -translate-x-full transition-transform duration-500 -z-10;
+}
+
+.terminal-btn:hover::before {
+  @apply translate-x-0;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: #c0003f;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-cinematic {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Scrollbar for Sidebar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 2px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(192, 0, 63, 0.2);
+}
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: rgba(192, 0, 63, 0.5);
 }

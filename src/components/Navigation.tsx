@@ -1,97 +1,63 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/manifesto', label: 'Manifesto' },
-  { href: '/about', label: 'About' },
-  { href: '/void-map', label: 'Void Map' },
-];
+import { useState, useEffect } from 'react';
+import { client } from '@/sanity/lib/client';
+import { settingsQuery } from '@/sanity/lib/queries';
 
 export default function Navigation() {
-  const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [settings, setSettings] = useState<any>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    client.fetch(settingsQuery).then(setSettings);
   }, []);
 
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 py-5 transition-all duration-500 ${
-        scrolled ? 'bg-void-deep/90 backdrop-blur-md border-b border-border' : 'bg-transparent'
-      }`}
-    >
-      {/* Logo */}
-      <Link
-        href="/"
-        className="font-display text-lg font-light tracking-[0.35em] text-soft uppercase hover:text-gold transition-colors"
-      >
-        LAL <span className="text-crimson italic font-bold">DIVANE</span>
-      </Link>
-
-      {/* Desktop Nav */}
-      <div className="hidden md:flex gap-8">
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`font-mono text-[8px] tracking-[0.35em] uppercase transition-colors ${
-              pathname === link.href
-                ? 'text-crimson'
-                : 'text-muted hover:text-crimson'
-            }`}
-          >
-            {link.label}
-          </Link>
-        ))}
-      </div>
-
-      {/* Mobile Menu Button */}
-      <button
-        onClick={() => setMenuOpen(!menuOpen)}
-        className="md:hidden font-mono text-[9px] tracking-[0.3em] text-muted hover:text-crimson transition-colors uppercase"
-        aria-label="Toggle navigation menu"
-      >
-        {menuOpen ? '[CLOSE]' : '[MENU]'}
-      </button>
-
-      {/* Mobile Menu */}
-      {menuOpen && (
+    <nav className="fixed top-0 left-0 right-0 z-[100] py-12 px-6">
+      <div className="layout-container relative flex flex-col items-center gap-8">
         <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2 }}
+        >
+          <Link href="/" className="group relative block text-center">
+            <span className="font-display text-2xl font-light tracking-[0.5em] text-soft transition-all duration-700 group-hover:tracking-[0.8em] group-hover:text-crimson">
+              {settings?.title || 'LAL DIVANE'}
+            </span>
+            <div className="absolute -bottom-2 left-1/2 h-px w-0 -translate-x-1/2 bg-crimson transition-all duration-700 group-hover:w-full opacity-50 shadow-[0_0_10px_#c0003f]" />
+          </Link>
+        </motion.div>
+
+        <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="absolute top-full left-0 right-0 bg-void-deep/95 backdrop-blur-md border-b border-border md:hidden"
+          transition={{ delay: 0.5, duration: 1 }}
+          className="flex items-center gap-8 md:gap-12 font-terminal text-[10px] uppercase tracking-[0.4em] text-muted/80 backdrop-blur-sm bg-black/10 px-8 py-3 rounded-full border border-white/5 overflow-x-auto max-w-full"
         >
-          <div className="flex flex-col items-center py-6 gap-5">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className={`font-mono text-[9px] tracking-[0.35em] uppercase transition-colors ${
-                  pathname === link.href
-                    ? 'text-crimson'
-                    : 'text-muted hover:text-crimson'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
+          {settings?.menuItems?.map((item: any, i: number) => (
+            <NavLink key={i} href={item.url} label={item.label} />
+          )) || (
+            <>
+              <NavLink href="/rituals" label="RITUALS" />
+              <NavLink href="/manifesto" label="MANIFESTO" />
+              <NavLink href="/about" label="IDENTITY" />
+            </>
+          )}
         </motion.div>
-      )}
-    </motion.nav>
+      </div>
+    </nav>
+  );
+}
+
+function NavLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link 
+      href={href} 
+      className="relative transition-all duration-300 hover:text-crimson group whitespace-nowrap"
+    >
+      {label}
+      <span className="absolute -bottom-1 left-0 h-px w-0 bg-crimson transition-all duration-300 group-hover:w-full opacity-40" />
+    </Link>
   );
 }
