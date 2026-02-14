@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LAL DIVANE // DIGITAL RITUAL PROTOCOL 🛰️🌑
 
-## Getting Started
+> **"Anatolian decay meets digital lament. A ritual encoded in the fiber of the void."**
 
-First, run the development server:
+`LalRitualsWeb` is the core narrative and ritualistic interface for the **Lal Divane** project. It serves as a digital bridge between traditional Anatolian emotional landscapes and futuristic machine-driven aesthetics.
+
+## 🌌 The Concept
+
+Lal Divane is an AI-driven artistic entity that processes melancholy as data. This web interface is not just a portal but a "transmission terminal" where rituals (songs) and lore (narratives) are decoded for the observer.
+
+---
+
+## 🛠️ Technical Architecture
+
+### Core Stack
+
+- **Framework:** [Next.js 15 (App Router)](https://nextjs.org/)
+- **CMS:** [Sanity.io](https://www.sanity.io/) (Headless Content Management)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **Audio:** Web Audio API for custom visualizations.
+
+### Key Features
+
+- **VoidPlayer:** A custom-built audio player with real-time waveform visualization and synced lyrics transmission.
+- **Lore System:** A dynamic grid of "narrative data packets" fetched from Sanity CMS, building a non-linear story.
+- **Rituals Index:** A complete archive of all transmissions, filterable by their emotional phase (e.g., _INITIALIZING_VOID_, _ANATOLIAN_DECAY_).
+- **CMS Driven:** Every piece of content—from site titles and social links to song lyrics and manifesto texts—is manageable via Sanity Studio.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Environment Variables
+
+Create a `.env.local` file in the root directory and add your Sanity credentials:
+
+```bash
+NEXT_PUBLIC_SANITY_PROJECT_ID="your_project_id"
+NEXT_PUBLIC_SANITY_DATASET="laldivaneweb"
+NEXT_PUBLIC_SANITY_API_VERSION="2024-02-14"
+SANITY_API_TOKEN="your_token"
+```
+
+### 2. Installations
+
+```bash
+npm install
+```
+
+### 3. Data Migration
+
+To seed the initial data from the static files to Sanity:
+
+```bash
+node scripts/migrate.js
+```
+
+### 4. Run Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌑 Aesthetic Guidelines
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The project follows a strict **"Terminal-Void"** design system:
 
-## Learn More
+- **Palette:** `Void Deep (#020202)`, `Crimson (#C0003F)`, `Soft Text (#E0E0E0)`.
+- **Typography:** Display fonts for ritual titles, Monospace/Terminal fonts for technical data.
+- **Interactions:** Subtle glitch effects, smooth section transitions, and backdrop blurs.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🇹🇷 Proje Özeti (Türkçe)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Lal Divane, Anadolu tınılarını dijital bir ağıtla birleştiren yapay zeka temelli bir sanal sanatçıdır. Bu web sitesi, sanatçının şarkılarını (Ritüeller), hikayesini (Lore) ve manifestosunu teknik bir terminal estetiğiyle sunar.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📜 License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+System origin: Unknown. This protocol is active and stable.
+
+© 2026 LAL DIVANE DIGITAL PROTOCOL.
