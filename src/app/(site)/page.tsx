@@ -63,7 +63,7 @@ export default function Home() {
   return (
     <div className="flex flex-col bg-void-deep relative">
       {/* ─── SECTION NAVIGATOR ─── */}
-      <div className="fixed right-12 top-1/2 -translate-y-1/2 z-[100] flex flex-col items-center gap-8">
+      <div className="fixed right-6 md:right-12 top-1/2 -translate-y-1/2 z-[100] hidden sm:flex flex-col items-center gap-8">
         <div className="h-24 w-px bg-gradient-to-b from-transparent via-crimson/20 to-crimson/40" />
         
         {['hero', 'lore', 'player'].map((id) => (
@@ -123,11 +123,11 @@ export default function Home() {
               </span>
             </div>
             
-            <h1 className="font-display text-8xl md:text-9xl font-light text-soft tracking-tight leading-none">
+            <h1 className="font-display text-5xl sm:text-7xl md:text-9xl font-light text-soft tracking-tight leading-tight md:leading-none">
               {settings?.heroTitle?.split(' ')[0] || 'LAL'} <span className="text-crimson opacity-80">{settings?.heroTitle?.split(' ')[1] || 'DIVANE'}</span>
             </h1>
             
-            <p className="max-w-2xl mx-auto font-display text-xl md:text-2xl text-muted italic leading-relaxed">
+            <p className="max-w-xl md:max-w-2xl mx-auto font-display text-lg md:text-2xl text-muted italic leading-relaxed px-4">
               &quot;{settings?.heroSubtitle || 'Anatolian decay meets digital lament. A ritual encoded in the fiber of the void.'}&quot;
             </p>
           </motion.div>
@@ -177,7 +177,7 @@ export default function Home() {
       </section>
 
       {/* ─── PLAYER SECTION ─── */}
-      <section id="player" className="relative w-full h-screen bg-void-dark/20 border-t border-white/5">
+      <section id="player" className="relative w-full min-h-screen bg-void-dark/20 border-t border-white/5">
         <VoidPlayer />
       </section>
     </div>

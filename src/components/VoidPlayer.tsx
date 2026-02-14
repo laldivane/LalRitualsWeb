@@ -178,9 +178,9 @@ export default function VoidPlayer() {
   };
 
   return (
-    <div className="flex h-full w-full bg-void-deep text-soft overflow-hidden font-terminal">
+    <div className="flex flex-col lg:flex-row h-full w-full bg-void-deep text-soft overflow-hidden font-terminal">
       {/* ─── SIDEBAR: TRACK LIST ─── */}
-      <aside className="w-80 border-r border-white/5 bg-void-dark/20 backdrop-blur-xl flex flex-col p-6 overflow-hidden">
+      <aside className="hidden lg:flex w-80 border-r border-white/5 bg-void-dark/20 backdrop-blur-xl flex-col p-6 overflow-hidden">
         <div className="mb-8 flex items-center justify-between px-2">
           <div className="flex items-center gap-3">
             <Activity size={14} className="text-crimson" />
@@ -288,10 +288,10 @@ export default function VoidPlayer() {
            <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-crimson/10 blur-[150px] rounded-full" />
         </div>
 
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-20 text-center overflow-hidden">
-            <div className="flex w-full h-full items-center justify-center gap-32">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 sm:p-12 lg:p-20 text-center overflow-hidden">
+            <div className="flex flex-col lg:flex-row w-full h-full items-center justify-center gap-12 lg:gap-32">
                 {/* Art & Info */}
-                <div className="flex flex-col items-center max-w-sm relative mt-20">
+                <div className="flex flex-col items-center w-full max-w-[280px] sm:max-w-sm relative mt-10 lg:mt-20">
                     {/* Circular Visualizer Path */}
                     <div className="absolute inset-0 -m-8 pointer-events-none z-0">
                         {isMounted && (
@@ -361,10 +361,10 @@ export default function VoidPlayer() {
                         >
                         {currentTrack?.emotionalPhase?.replace(/_/g, ' ')}
                         </motion.p>
-                        <h1 className="font-display text-5xl sm:text-6xl font-light text-soft tracking-tight">
+                        <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-light text-soft tracking-tight">
                         {currentTrack?.title}
                         </h1>
-                        <p className="font-display text-sm italic text-muted max-w-sm mx-auto leading-relaxed opacity-80">
+                        <p className="font-display text-xs sm:text-sm italic text-muted max-w-sm mx-auto leading-relaxed opacity-80 line-clamp-2 md:line-clamp-none">
                         &quot;{currentTrack?.description}&quot;
                         </p>
                     </div>
@@ -373,16 +373,16 @@ export default function VoidPlayer() {
                 {/* Lyrics Side Panel */}
                 <motion.div 
                     key={(currentTrack?.id || currentTrack?._id) + '_lyrics'}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="flex-1 max-w-md h-[450px] border-l border-white/5 pl-20 flex flex-col text-left"
+                    className="flex-1 w-full max-w-md h-[250px] sm:h-[450px] border-t lg:border-t-0 lg:border-l border-white/5 pt-12 lg:pt-0 lg:pl-20 flex flex-col text-left"
                 >
                     <div className="mb-8 flex items-center gap-3">
                         <Music size={14} className="text-crimson" />
                         <h2 className="text-[10px] uppercase tracking-[0.4em] text-muted">Transmission_Lyrics</h2>
                     </div>
-                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-4 font-display text-xl italic text-soft/40 leading-relaxed scroll-smooth">
+                    <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-4 font-display text-lg sm:text-xl italic text-soft/40 leading-relaxed scroll-smooth">
                         {((currentTrack?.syncedLyrics && currentTrack.syncedLyrics.length > 0) ? currentTrack.syncedLyrics : currentTrack?.ritualText || []).map((line: any, i: number) => {
                             const isString = typeof line === 'string';
                             const text = isString ? line : (line as LyricLine).text;
@@ -412,20 +412,20 @@ export default function VoidPlayer() {
       )}
 
         {/* ─── CONTROLS: BOTTOM BAR ─── */}
-        <footer className="h-32 border-t border-white/5 bg-void-dark/40 backdrop-blur-2xl px-12 flex items-center gap-12 relative z-20">
-             <div className="flex-1 flex items-center gap-8">
-                <div className="flex items-center gap-4">
+        <footer className="h-40 sm:h-32 border-t border-white/5 bg-void-dark/40 backdrop-blur-2xl px-6 sm:px-12 flex flex-col sm:row items-center justify-center gap-6 sm:gap-12 relative z-20">
+             <div className="w-full sm:flex-1 flex items-center gap-4 sm:gap-8">
+                <div className="flex items-center gap-2 sm:gap-4">
                   <button onClick={prevTrack} className="text-muted hover:text-crimson transition-colors p-2">
-                    <SkipBack size={20} />
+                    <SkipBack size={18} />
                   </button>
                   <button 
                     onClick={togglePlay}
-                    className="h-14 w-14 rounded-full border border-crimson/30 flex items-center justify-center hover:bg-crimson/10 hover:border-crimson transition-all text-crimson shadow-[0_0_15px_rgba(192,0,63,0.2)]"
+                    className="h-12 w-12 sm:h-14 sm:w-14 rounded-full border border-crimson/30 flex items-center justify-center hover:bg-crimson/10 hover:border-crimson transition-all text-crimson shadow-[0_0_15px_rgba(192,0,63,0.2)]"
                   >
-                    {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-1" />}
+                    {isPlaying ? <Pause size={22} fill="currentColor" /> : <Play size={22} fill="currentColor" className="ml-1" />}
                   </button>
                   <button onClick={nextTrack} className="text-muted hover:text-crimson transition-colors p-2">
-                    <SkipForward size={20} />
+                    <SkipForward size={18} />
                   </button>
                 </div>
 
