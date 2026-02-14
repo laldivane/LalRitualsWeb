@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useRef, useEffect, useCallback } from 'react';
 import { client } from '@/sanity/lib/client';
 import { ritualsQuery } from '@/sanity/lib/queries';
-import { Ritual, LyricLine } from '@/lib/types';
+import { Ritual, LyricLine, VisualizerMode } from '@/lib/types';
 
 interface PlayerContextType {
   rituals: Ritual[];
@@ -12,7 +12,7 @@ interface PlayerContextType {
   isPlaying: boolean;
   currentTime: number;
   duration: number;
-  waveformData: number[];
+  frequencyData: number[];
   isMounted: boolean;
   setCurrentTrackIndex: (index: number) => void;
   togglePlay: () => void;
@@ -21,6 +21,10 @@ interface PlayerContextType {
   seek: (time: number) => void;
   activeLyric: LyricLine | null;
   audioRef: React.RefObject<HTMLAudioElement | null>;
+  visualizerMode: VisualizerMode;
+  setVisualizerMode: (mode: VisualizerMode) => void;
+  showCoverArt: boolean;
+  setShowCoverArt: (show: boolean) => void;
 }
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -31,7 +35,9 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [waveformData, setWaveformData] = useState<number[]>(new Array(48).fill(0));
+  const [frequencyData, setFrequencyData] = useState<number[]>(new Array(64).fill(0));
+  const [visualizerMode, setVisualizerMode] = useState<VisualizerMode>('resonance');
+  const [showCoverArt, setShowCoverArt] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -72,15 +78,20 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     const update = () => {
       if (analyserRef.current && isPlaying) {
         const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-        analyserRef.current.getByteTimeDomainData(dataArray);
+        analyserRef.current.getByteFrequencyData(dataArray);
         
-        const newWaveform = [];
-        const step = Math.floor(dataArray.length / 48);
-        for (let i = 0; i < 48; i++) {
-          const amplitude = Math.abs(dataArray[i * step] - 128) / 128;
-          newWaveform.push(amplitude);
+        const newFrequencyData = [];
+        const bars = 64;
+        const step = Math.floor(dataArray.length / bars);
+        
+        for (let i = 0; i < bars; i++) {
+          let sum = 0;
+          for (let j = 0; j < step; j++) {
+            sum += dataArray[i * step + j];
+          }
+          newFrequencyData.push(sum / step);
         }
-        setWaveformData(newWaveform);
+        setFrequencyData(newFrequencyData);
         animationFrameRef.current = requestAnimationFrame(update);
       }
     };
@@ -164,7 +175,7 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       isPlaying,
       currentTime,
       duration,
-      waveformData,
+      frequencyData,
       isMounted,
       setCurrentTrackIndex,
       togglePlay,
@@ -172,7 +183,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       prevTrack,
       seek,
       activeLyric,
-      audioRef
+      audioRef,
+      visualizerMode,
+      setVisualizerMode,
+      showCoverArt,
+      setShowCoverArt
     }}>
       {children}
       <audio

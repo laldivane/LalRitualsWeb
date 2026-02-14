@@ -1,7 +1,8 @@
 'use client';
 
-import VoidPlayer from "@/components/VoidPlayer";
+import Link from "next/link";
 import { motion, useScroll, useSpring } from "framer-motion";
+import SystemIntro from "@/components/SystemIntro";
 import { Activity, ArrowDown, Cpu, Zap, Radio, Database, Shield, Wifi } from "lucide-react";
 import { useState, useEffect } from "react";
 import { client } from "@/sanity/lib/client";
@@ -22,12 +23,12 @@ export default function Home() {
   });
 
   const loreIcons = [
-    <Cpu key="cpu" size={24} />,
-    <Zap key="zap" size={24} />,
-    <Radio key="radio" size={24} />,
-    <Database key="db" size={24} />,
-    <Shield key="shield" size={24} />,
-    <Wifi key="wifi" size={24} />
+    <Cpu key="cpu" size={20} strokeWidth={1} />,
+    <Zap key="zap" size={20} strokeWidth={1} />,
+    <Radio key="radio" size={20} strokeWidth={1} />,
+    <Database key="db" size={20} strokeWidth={1} />,
+    <Shield key="shield" size={20} strokeWidth={1} />,
+    <Wifi key="wifi" size={20} strokeWidth={1} />
   ];
 
   useEffect(() => {
@@ -64,146 +65,132 @@ export default function Home() {
 
   return (
     <div className="flex flex-col bg-void-deep relative">
+      <SystemIntro />
+      <div className="mesh-gradient opacity-20" />
+      
       {/* ─── SECTION NAVIGATOR ─── */}
-      <div className="fixed right-6 md:right-12 top-1/2 -translate-y-1/2 z-[100] hidden sm:flex flex-col items-center gap-8">
-        <div className="h-24 w-px bg-gradient-to-b from-transparent via-crimson/20 to-crimson/40" />
-        
-        {['hero', 'lore', 'player'].map((id) => (
+      <div className="fixed right-6 md:right-12 top-1/2 -translate-y-1/2 z-[100] hidden sm:flex flex-col items-center gap-12">
+        {['hero', 'lore'].map((id) => (
           <button
             key={id}
             onClick={() => scrollTo(id)}
-            className="group relative flex items-center justify-center h-10 w-10"
+            className="group relative flex items-center justify-center p-2"
             aria-label={`Scroll to ${id} section`}
           >
-            <motion.div
-              animate={{ 
-                rotate: activeSection === id ? 360 : 0,
-                scale: activeSection === id ? 1.5 : 1
-              }}
-              transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
-              className={`absolute inset-0 border rounded-full transition-colors duration-500 m-3 ${
-                activeSection === id ? 'border-crimson shadow-[0_0_10px_#c0003f]' : 'border-white/10 group-hover:border-white/30'
-              }`}
-              style={{ padding: '2px' }}
-            >
-                <div className={`w-full h-full rounded-full border border-dashed text-[4px] flex items-center justify-center ${activeSection === id ? 'border-crimson/50' : 'border-transparent'}`}>
-                    {activeSection === id && <div className="w-1 h-1 bg-crimson rounded-full animate-pulse" />}
-                </div>
-            </motion.div>
+            <div className={`w-1 h-1 rounded-full transition-all duration-700 ${activeSection === id ? 'bg-crimson scale-[3] shadow-[0_0_15px_rgba(192,0,63,0.8)]' : 'bg-white/10 group-hover:bg-white/40'}`} />
             
-            <span className={`absolute right-12 text-[8px] tracking-[0.3em] uppercase font-terminal transition-all duration-500 whitespace-nowrap opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 ${
+            <span className={`absolute right-10 text-[8px] tracking-[0.6em] uppercase font-sans transition-all duration-700 whitespace-nowrap opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 ${
               activeSection === id ? 'text-crimson opacity-100' : 'text-muted'
             }`}>
-              {id}_protocol
+              {id}
             </span>
           </button>
         ))}
-
-        <div className="h-24 w-px bg-gradient-to-t from-transparent via-crimson/20 to-crimson/40" />
       </div>
 
-      <motion.div className="fixed top-0 left-0 right-0 h-1 bg-crimson z-[110] origin-left" style={{ scaleX }} />
+      <motion.div className="fixed top-0 left-0 right-0 h-[1px] bg-crimson/50 z-[110] origin-left" style={{ scaleX }} />
 
       {/* ─── HERO SECTION ─── */}
       <section id="hero" className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-crimson/5 blur-[150px] rounded-full animate-pulse" />
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-void-deep/50 to-void-deep" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-crimson/5 blur-[150px] rounded-full animate-pulse" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-void-deep/30 to-void-deep" />
         </div>
 
-        <div className="relative z-10 text-center space-y-8 px-6">
+        <div className="relative z-10 text-center space-y-12 px-6">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            className="flex flex-col items-center gap-4"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col items-center gap-6"
           >
-            <div className="flex items-center gap-3 px-4 py-1 border border-crimson/30 rounded-full bg-crimson/5 backdrop-blur-sm">
-              <Activity size={12} className="text-crimson animate-pulse" />
-              <span className="text-[10px] tracking-[0.4em] text-crimson font-terminal uppercase">
-                {settings?.systemStatus || 'System_Active // Void_Protocol'}
+            <div className="flex items-center gap-3 px-4 py-1.5 border border-white/5 rounded-full bg-white/[0.02] backdrop-blur-sm">
+              <span className="w-1 h-1 bg-crimson rounded-full animate-ping" />
+              <span className="text-[9px] tracking-[0.5em] text-muted font-sans uppercase">
+                {settings?.systemStatus || 'Protocol_Initialized'}
               </span>
             </div>
             
-            <h1 className="font-display text-5xl sm:text-7xl md:text-9xl font-light text-soft tracking-tight leading-tight md:leading-none">
-              {settings?.heroTitle?.split(' ')[0] || 'LAL'} <span className="text-crimson opacity-80">{settings?.heroTitle?.split(' ')[1] || 'DIVANE'}</span>
+            <h1 className="font-display text-7xl sm:text-9xl md:text-[12rem] font-light text-soft tracking-tighter leading-none">
+              {settings?.heroTitle?.split(' ')[0] || 'LAL'} <span className="text-crimson italic">{settings?.heroTitle?.split(' ')[1] || 'DIVANE'}</span>
             </h1>
             
-            <p className="max-w-xl md:max-w-2xl mx-auto font-display text-lg md:text-2xl text-muted italic leading-relaxed px-4">
-              &quot;{settings?.heroSubtitle || 'Anatolian decay meets digital lament. A ritual encoded in the fiber of the void.'}&quot;
+            <p className="max-w-xl md:max-w-2xl mx-auto font-classic text-xl md:text-3xl text-muted/60 leading-relaxed font-light">
+              &quot;{settings?.heroSubtitle || 'Anatolian decay meets digital lament.'}&quot;
             </p>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="flex items-center justify-center gap-8 pt-8"
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 1.5 }}
+            className="pt-12"
           >
-            <button 
-              onClick={() => scrollTo('player')}
-              className="terminal-btn"
+            <Link 
+              href="/player"
+              className="group relative inline-flex items-center gap-4 text-soft hover:text-crimson transition-colors duration-700"
             >
-              Initialize_Ritual
-            </button>
+              <span className="font-sans text-[10px] tracking-[0.6em] uppercase">Enter_The_Void</span>
+              <div className="w-12 h-px bg-soft/20 group-hover:bg-crimson/50 group-hover:w-24 transition-all duration-700" />
+            </Link>
           </motion.div>
         </div>
 
         <motion.button 
           animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-crimson/40 cursor-pointer p-4 min-w-[44px] min-h-[44px] flex items-center justify-center"
+          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-muted/20 hover:text-crimson/40 transition-colors cursor-pointer p-4"
           onClick={() => scrollTo('lore')}
-          aria-label="Scroll to Lore section"
         >
-          <ArrowDown size={24} />
+          <ArrowDown size={20} strokeWidth={1} />
         </motion.button>
       </section>
 
-      {/* ─── LORE SECTION (DYNAMIC) ─── */}
-      <section id="lore" className="relative min-h-screen py-32 w-full flex flex-col items-center justify-center overflow-hidden border-t border-white/5">
-         <h2 className="sr-only">Lore Fragments</h2>
-         <div className="layout-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+      {/* ─── LORE SECTION ─── */}
+      <section id="lore" className="relative min-h-screen py-48 w-full flex flex-col items-center justify-center border-t border-white/5">
+         <div className="layout-container mb-24 text-center">
+            <span className="font-terminal text-[10px] text-crimson tracking-[0.6em] uppercase block mb-4">Lore_Fragments</span>
+            <h2 className="font-display text-5xl md:text-7xl text-soft tracking-tight">Digital <span className="italic">Echoes</span></h2>
+         </div>
+
+         <div className="layout-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 relative z-10">
             {(loreNodes.length > 0 ? loreNodes : []).map((lore, index) => (
                 <LoreCard 
                     key={lore._id || lore.id}
+                    index={index}
                     icon={loreIcons[index % loreIcons.length]}
                     title={lore.title}
-                    desc={lore.content[0]} // Use the first lyrical line
+                    desc={lore.content[0]}
                 />
             ))}
          </div>
-         
-         <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-            <div className="absolute top-1/2 left-0 w-full h-px bg-crimson" />
-            <div className="absolute top-0 left-1/2 w-px h-full bg-crimson" />
-         </div>
-      </section>
-
-      {/* ─── PLAYER SECTION ─── */}
-      <section id="player" className="relative w-full min-h-screen bg-void-dark/20 border-t border-white/5">
-        <VoidPlayer />
       </section>
     </div>
   );
 }
 
-function LoreCard({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) {
+function LoreCard({ icon, title, desc, index }: { icon: React.ReactNode, title: string, desc: string, index: number }) {
     return (
         <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: index * 0.1 }}
             viewport={{ once: true }}
-            className="p-8 border border-white/5 bg-white/[0.02] backdrop-blur-md rounded-sm group hover:border-crimson/40 transition-all duration-700"
+            className="p-10 border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition-all duration-1000 group relative overflow-hidden"
         >
-            <div className="text-crimson/60 mb-6 group-hover:text-crimson group-hover:scale-110 transition-all duration-700">
+            <div className="absolute top-0 left-0 w-px h-0 bg-crimson/50 transition-all duration-1000 group-hover:h-full" />
+            
+            <div className="text-muted/40 mb-8 group-hover:text-crimson transition-colors duration-1000">
                 {icon}
             </div>
-            <h3 className="font-terminal text-[12px] tracking-[0.4em] text-soft mb-4 uppercase">{title}</h3>
-            <p className="font-display text-muted text-lg leading-relaxed italic opacity-80 group-hover:opacity-100 transition-opacity">
-                &quot;{desc}&quot;
-            </p>
+            
+            <div className="space-y-4">
+                <span className="font-terminal text-[8px] text-crimson/30 tracking-[0.5em] uppercase">Fragment_{String(index + 1).padStart(2, '0')}</span>
+                <h3 className="font-sans text-[11px] tracking-[0.4em] text-soft uppercase group-hover:text-crimson transition-colors duration-700">{title}</h3>
+                <p className="font-classic text-lg md:text-xl text-muted/50 leading-relaxed font-light italic">
+                    &quot;{desc}&quot;
+                </p>
+            </div>
         </motion.div>
     );
 }

@@ -38,8 +38,8 @@ Create a `.env.local` file in the root directory and add your Sanity credentials
 
 ```bash
 NEXT_PUBLIC_SANITY_PROJECT_ID="your_project_id"
-NEXT_PUBLIC_SANITY_DATASET="laldivaneweb"
-NEXT_PUBLIC_SANITY_API_VERSION="2024-02-14"
+NEXT_PUBLIC_SANITY_DATASET="Your Dataset"
+NEXT_PUBLIC_SANITY_API_VERSION="Your API Version"
 SANITY_API_TOKEN="your_token"
 ```
 

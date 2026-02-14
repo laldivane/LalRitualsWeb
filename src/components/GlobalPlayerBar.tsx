@@ -23,10 +23,10 @@ export default function GlobalPlayerBar() {
 
   // Hide the global bar if we are on the home page (where the full player lives)
   // or if there is no track selected yet.
-  const isPlayerVisiblePage = pathname === '/';
+  const isPlayerPage = pathname === '/player';
   
   if (!isMounted || !currentTrack) return null;
-  if (isPlayerVisiblePage) return null;
+  if (isPlayerPage) return null;
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 

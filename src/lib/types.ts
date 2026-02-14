@@ -24,16 +24,30 @@ export interface Ritual {
   id?: string;
   _id?: string;
   title: string;
-  slug: any;
+  slug: string | { current: string };
   releaseDate: string;
   description: string;
-  coverImage: any;
+  coverImage: {
+    _type: 'image';
+    asset: {
+      _ref: string;
+      _type: 'reference';
+    };
+  } | string;
   emotionalPhase: EmotionalPhase;
   audioUrl?: string;
   ritualText: string[];
   syncedLyrics?: LyricLine[];
   loreConnections: string[];
   featured?: boolean;
+  primaryColor?: string;
+  secondaryColor?: string;
+  vibrantColor?: string;
+  darkVibrantColor?: string;
+  lightVibrantColor?: string;
+  mutedColor?: string;
+  darkMutedColor?: string;
+  lightMutedColor?: string;
 }
 
 export interface LoreNode {
@@ -46,6 +60,13 @@ export interface LoreNode {
   connections: string[];
 }
 
+export type VisualizerMode = 'resonance';
+
+export interface MenuItem {
+  label: string;
+  url: string;
+}
+
 export interface Settings {
   title: string;
   description: string;
@@ -53,5 +74,5 @@ export interface Settings {
   heroSubtitle: string;
   systemStatus: string;
   socialLinks: { platform: string; url: string }[];
-  menuItems: { label: string; url: string }[];
+  menuItems: MenuItem[];
 }

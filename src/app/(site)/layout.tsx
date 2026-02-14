@@ -11,7 +11,7 @@ export default function SiteLayout({
   return (
     <PlayerProvider>
       <Navigation />
-      <main className="min-h-screen pt-40 pb-20">
+      <main>
         {children}
       </main>
       <GlobalPlayerBar />

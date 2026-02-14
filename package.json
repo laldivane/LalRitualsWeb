@@ -11,6 +11,8 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.989.0",
     "@portabletext/react": "^6.0.2",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
     "@sanity/vision": "^5.9.0",
     "framer-motion": "^12.34.0",
     "lucide-react": "^0.564.0",
@@ -19,7 +21,8 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "sanity": "^5.9.0",
-    "styled-components": "^6.3.9"
+    "styled-components": "^6.3.9",
+    "three": "^0.182.0"
   },
   "devDependencies": {
     "@sanity/client": "^7.14.1",

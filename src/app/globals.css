@@ -4,13 +4,17 @@
   --color-crimson: #c0003f;
   --color-crimson-light: #ff0055;
   --color-void-deep: #0a0005;
+  --color-void-dark: #0f0008;
   --color-void-card: #14080e;
   --color-soft: #f0e2d4;
   --color-muted: #8a7a7a;
   --color-border-dark: #2a1a1f;
   
-  --font-display: 'Cormorant Garamond', serif;
+  --font-display: 'Syne', sans-serif;
+  --font-sans: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
   --font-terminal: 'Share Tech Mono', monospace;
+  --font-classic: 'Cormorant Garamond', serif;
 }
 
 :root {
@@ -20,14 +24,20 @@
 }
 
 body {
-  @apply bg-void-deep text-soft font-terminal antialiased overflow-x-hidden;
+  @apply bg-void-deep text-soft font-body antialiased overflow-x-hidden selection:bg-crimson/30 selection:text-white;
   min-height: 100vh;
 }
 
 body::before {
   content: "";
-  @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.03];
+  @apply fixed inset-0 pointer-events-none z-[9999] opacity-[0.04] mix-blend-overlay;
   background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+}
+
+.mesh-gradient {
+  background: radial-gradient(at 100% 0%, rgba(192, 0, 63, 0.15) 0px, transparent 50%),
+              radial-gradient(at 0% 100%, rgba(192, 0, 63, 0.1) 0px, transparent 50%);
+  @apply absolute inset-0 -z-10 pointer-events-none;
 }
 
 .layout-container {

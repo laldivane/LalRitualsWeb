@@ -1,15 +1,18 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Play, Pause, SkipBack, SkipForward, Shield, Hash, Activity, Music } from 'lucide-react';
+import { useRef, useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Play, Pause, SkipBack, SkipForward, Hash, Activity, Music, Maximize2, Minimize2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { urlForImage } from '@/sanity/lib/image';
 import { LyricLine } from '@/lib/types';
 import { usePlayer } from '@/lib/PlayerContext';
+import Visualizer from './Visualizer';
 
 export default function VoidPlayer() {
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
   const {
     rituals,
     currentTrackIndex,
@@ -17,35 +20,31 @@ export default function VoidPlayer() {
     isPlaying,
     currentTime,
     duration,
-    waveformData,
+    frequencyData,
     isMounted,
     setCurrentTrackIndex,
     togglePlay,
     nextTrack,
     prevTrack,
     seek,
-    activeLyric
+    activeLyric,
+    visualizerMode,
+    setVisualizerMode,
+    showCoverArt,
+    setShowCoverArt
   } = usePlayer();
 
-  const activeLyricRef = useRef<HTMLParagraphElement | null>(null);
   const lyricsContainerRef = useRef<HTMLDivElement | null>(null);
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   useEffect(() => {
-    if (activeLyricRef.current && lyricsContainerRef.current) {
-        const container = lyricsContainerRef.current;
-        const element = activeLyricRef.current;
-        
-        const containerCenter = container.offsetHeight / 2;
-        const elementOffset = element.offsetTop - container.offsetTop;
-        
-        container.scrollTo({
-          top: elementOffset - containerCenter + (element.offsetHeight / 2),
-          behavior: 'smooth'
-        });
-    }
-  }, [activeLyric]);
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsFullScreen(false);
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
 
   const formatTime = (time: number) => {
     if (isNaN(time)) return "00:00";
@@ -59,218 +58,166 @@ export default function VoidPlayer() {
     seek(seekTime);
   };
 
+  /* Helper to get Image URL */
+  const coverUrl = currentTrack?.coverImage 
+    ? (typeof currentTrack.coverImage === 'string' ? currentTrack.coverImage : urlForImage(currentTrack.coverImage).url()) 
+    : undefined;
+
   return (
-    <div className="flex flex-col lg:flex-row h-full w-full bg-void-deep text-soft overflow-hidden font-terminal">
+    <div className="flex flex-col lg:flex-row h-full w-full bg-void-deep text-soft overflow-hidden font-sans">
+      <div className="mesh-gradient opacity-10" />
+      
       {/* ─── SIDEBAR: TRACK LIST ─── */}
-      <aside className="hidden lg:flex w-80 border-r border-white/5 bg-void-dark/20 backdrop-blur-xl flex-col p-6 overflow-hidden">
-        <div className="mb-8 flex items-center justify-between px-2">
-          <div className="flex items-center gap-3">
-            <Activity size={14} className="text-crimson" />
-            <h2 className="text-[10px] uppercase tracking-[0.4em] text-muted font-bold">Ritual_Queue</h2>
-          </div>
-          <span className="text-[9px] text-crimson/40 font-mono italic">{rituals.length}_FILES</span>
-        </div>
-        
-        <div className="flex-1 overflow-y-auto space-y-1 pr-2 custom-scrollbar -mr-2">
-          {rituals.map((ritual, index) => (
-            <button
-              key={ritual.id || ritual._id}
-              onClick={() => {
-                setCurrentTrackIndex(index);
-              }}
-              aria-label={`Play ritual: ${ritual.title}`}
-              className={`w-full flex items-center gap-4 p-3 rounded-sm transition-all text-left group border border-transparent ${
-                currentTrackIndex === index 
-                ? 'bg-crimson/10 border-crimson/20 shadow-[0_0_15px_rgba(192,0,63,0.05)]' 
-                : 'hover:bg-white/5 hover:border-white/5'
-              }`}
-            >
-              <div className="text-[9px] font-mono text-muted w-4 opacity-50">
-                {String(index + 1).padStart(2, '0')}
+      <AnimatePresence initial={false}>
+        {showSidebar && (
+          <motion.aside 
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 320, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="hidden lg:flex border-r border-white/5 bg-void-dark/20 backdrop-blur-xl flex-col overflow-hidden"
+          >
+            <div className="w-80 h-full flex flex-col p-8">
+              <div className="mb-10 flex items-center justify-between px-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-1.5 h-1.5 bg-crimson rounded-full animate-pulse" />
+                  <h2 className="text-[9px] uppercase tracking-[0.6em] text-muted font-semibold">Queue</h2>
+                </div>
+                <span className="text-[8px] text-crimson/30 font-terminal tracking-wider">[{rituals.length}]</span>
               </div>
-
-              <div className="relative h-10 w-10 flex-shrink-0 bg-void-deep border border-white/10 overflow-hidden ring-1 ring-white/5">
-                 {ritual.coverImage && (
-                   <Image 
-                    src={typeof ritual.coverImage === 'string' ? ritual.coverImage : urlForImage(ritual.coverImage).url()} 
-                    alt="" fill className={`object-cover transition-all duration-700 ${currentTrackIndex === index ? 'grayscale-0 scale-110' : 'grayscale opacity-60 group-hover:opacity-100 group-hover:grayscale-0'}`} />
-                 )}
-                 {currentTrackIndex === index && isPlaying && (
-                    <div className="absolute inset-0 bg-void-deep/40 flex items-center justify-center">
-                        <motion.div
-                            animate={{ scale: [1, 1.2, 1] }}
-                            transition={{ repeat: Infinity, duration: 1 }}
-                        >
-                            <Music size={12} className="text-crimson" />
-                        </motion.div>
+              
+              <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar -mr-4">
+                {rituals.map((ritual, index) => (
+                  <button
+                    key={ritual.id || ritual._id}
+                    onClick={() => setCurrentTrackIndex(index)}
+                    className={`w-full flex items-center gap-5 p-3 rounded-none transition-all duration-500 text-left group border-l-2 ${
+                      currentTrackIndex === index 
+                      ? 'bg-crimson/[0.03] border-crimson' 
+                      : 'border-transparent hover:bg-white/[0.02] hover:border-white/10'
+                    }`}
+                  >
+                    <div className="relative h-10 w-10 flex-shrink-0 bg-void-deep overflow-hidden">
+                       {ritual.coverImage && (
+                         <Image 
+                          src={typeof ritual.coverImage === 'string' ? ritual.coverImage : urlForImage(ritual.coverImage).url()} 
+                          alt="" fill className={`object-cover transition-all duration-1000 ${currentTrackIndex === index ? 'grayscale-0' : 'grayscale opacity-40 group-hover:opacity-100 group-hover:grayscale-0'}`} />
+                       )}
+                       {currentTrackIndex === index && isPlaying && (
+                          <div className="absolute inset-0 bg-void-deep/60 flex items-center justify-center">
+                              <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity }}>
+                                  <Music size={10} className="text-crimson" />
+                              </motion.div>
+                          </div>
+                       )}
                     </div>
-                 )}
+
+                    <div className="flex-1 overflow-hidden">
+                      <p className={`text-[10px] truncate uppercase tracking-[0.2em] font-medium transition-colors duration-500 ${currentTrackIndex === index ? 'text-crimson' : 'text-soft/60 group-hover:text-soft'}`}>
+                        {ritual.title}
+                      </p>
+                      <p className="text-[7px] text-muted/40 uppercase tracking-widest mt-1">{ritual.emotionalPhase?.replace(/_/g, ' ')}</p>
+                    </div>
+                  </button>
+                ))}
               </div>
 
-              <div className="flex-1 overflow-hidden">
-                <p className={`text-[10px] truncate uppercase tracking-widest font-medium ${currentTrackIndex === index ? 'text-crimson' : 'text-soft/70 group-hover:text-soft'}`}>
-                  {ritual.title}
-                </p>
-                <div className="flex items-center gap-2 mt-1">
-                    <p className="text-[7px] text-muted truncate uppercase tracking-tighter">{ritual.emotionalPhase?.replace(/_/g, ' ')}</p>
-                    {currentTrackIndex === index && (
-                        <span className="h-1 w-1 bg-crimson rounded-full animate-pulse" />
-                    )}
-                </div>
+              <div className="mt-8 pt-8 border-t border-white/5 space-y-6">
+                 <Link href="/rituals" className="flex items-center gap-3 text-[8px] text-muted/40 hover:text-crimson transition-all tracking-[0.4em] uppercase group">
+                    <Hash size={10} className="group-hover:rotate-90 transition-transform duration-500" />
+                    Return_To_Base
+                 </Link>
+                 <div className="p-4 bg-crimson/[0.02] border border-crimson/10">
+                    <p className="text-[7px] text-crimson/50 leading-relaxed uppercase tracking-[0.2em]">
+                      System_Status: Stable<br/>Connect: Encrypted<br/>Node: 0xLAL_DIVANE
+                    </p>
+                 </div>
               </div>
-
-              {currentTrackIndex === index && (
-                <div className="text-[8px] font-mono text-crimson animate-pulse">
-                    LVL_AC
-                </div>
-              )}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-6 pt-6 border-t border-white/5 flex flex-col gap-4">
-           <Link href="/rituals" className="flex items-center gap-3 text-[9px] text-muted hover:text-soft transition-colors tracking-[0.2em] group">
-              <Hash size={12} className="group-hover:text-crimson transition-colors" />
-              VOICE_CORE_ROOT
-           </Link>
-           <div className="p-3 bg-crimson/10 border border-crimson/20 rounded-sm shadow-[0_0_15px_rgba(192,0,63,0.05)]">
-              <p className="text-[8px] text-crimson leading-relaxed uppercase italic font-medium tracking-[0.1em]">
-                System is synchronized with the void. Every ritual is a data packet. Do not interrupt the stream.
-              </p>
-           </div>
-        </div>
-      </aside>
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
 
       {/* ─── MAIN: DISPLAY ─── */}
       <main className="flex-1 flex flex-col relative overflow-hidden">
         {!currentTrack ? (
-          <div className="flex-1 flex items-center justify-center font-terminal text-[10px] uppercase tracking-[0.5em] text-crimson/40 animate-pulse">
-            {"// Synchronizing_Ritual_Stream //"}
+          <div className="flex-1 flex items-center justify-center font-terminal text-[10px] uppercase tracking-[1em] text-crimson/20 animate-pulse">
+            Sync_Void_Protocol
           </div>
         ) : (
           <>
-        {/* Dynamic Background */}
-        <div className="absolute inset-0 z-0 opacity-20 transition-all duration-1000">
-           <div className={`absolute inset-0 bg-gradient-to-br from-crimson/20 via-transparent to-transparent`} />
-           <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-crimson/10 blur-[150px] rounded-full" />
-        </div>
-
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 sm:p-12 lg:p-20 text-center overflow-hidden">
-            <div className="flex flex-col lg:flex-row w-full h-full items-center justify-center gap-12 lg:gap-32">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8 lg:p-24 text-center overflow-hidden">
+            <div className="flex flex-col lg:flex-row w-full h-full items-center justify-center gap-16 lg:gap-32">
                 {/* Art & Info */}
-                <div className="flex flex-col items-center w-full max-w-[280px] sm:max-w-sm relative mt-10 lg:mt-20">
-                    {/* Circular Visualizer Path */}
-                    <div className="absolute inset-0 -m-8 pointer-events-none z-0">
-                        {isMounted && (
-                          <svg viewBox="0 0 120 120" className="w-full h-full transform -rotate-90">
-                              {/* Outer Glow Ring */}
-                              <circle 
-                                  cx="60" cy="60" r="50" 
-                                  fill="none" 
-                                  stroke="currentColor" 
-                                  strokeWidth="0.2" 
-                                  className="text-crimson/5 opacity-50"
-                              />
-                            
-                            {waveformData.map((v, i) => {
-                                const angle = (i / waveformData.length) * Math.PI * 2;
-                                const radius = 51;
-                                const minHeight = 0.5;
-                                const height = v * 8;
-                                
-                                const x1 = 60 + Math.cos(angle) * radius;
-                                const y1 = 60 + Math.sin(angle) * radius;
-                                const x2 = 60 + Math.cos(angle) * (radius + minHeight + height);
-                                const y2 = 60 + Math.sin(angle) * (radius + minHeight + height);
-                                
-                                return (
-                                    <line
-                                        key={i}
-                                        x1={x1} y1={y1}
-                                        x2={x2} y2={y2}
-                                        stroke="currentColor"
-                                        strokeWidth="0.8"
-                                        className="text-crimson"
-                                        style={{
-                                            opacity: 0.2 + v * 0.8,
-                                            filter: `drop-shadow(0 0 2px rgba(192, 0, 63, ${v}))`,
-                                        }}
-                                    />
-                                );
-                            })}
-                          </svg>
-                        )}
+                <div className="flex flex-col items-center w-full max-w-[400px] aspect-square relative justify-center group">
+                    {/* Visualizer Background */}
+                    <div className="absolute inset-[-10%] pointer-events-none z-0 opacity-80">
+                        {isMounted && <Visualizer data={frequencyData} imageUrl={coverUrl} color={
+                            currentTrack?.primaryColor || 
+                            currentTrack?.vibrantColor || 
+                            currentTrack?.darkVibrantColor || 
+                            currentTrack?.lightVibrantColor || 
+                            currentTrack?.secondaryColor || 
+                            currentTrack?.mutedColor
+                        } />}
                     </div>
 
-                    <motion.div 
-                    key={(currentTrack?.id || currentTrack?._id) + '_art'}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1 }}
-                    className="relative aspect-square w-full border border-white/10 bg-void-deep shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden group mb-12 z-10"
-                    >
-                        {currentTrack?.coverImage && (
-                          <Image 
-                            src={typeof currentTrack.coverImage === 'string' ? currentTrack.coverImage : urlForImage(currentTrack.coverImage).url()} 
-                            alt="" fill className="object-cover" priority 
-                          />
+                    {/* Circular Cover Art */}
+                    <AnimatePresence mode="wait">
+                        {showCoverArt && currentTrack?.coverImage && (
+                            <motion.div 
+                                key={(currentTrack?.id || currentTrack?._id) + '_art'}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                className="relative w-[46%] aspect-square rounded-full border border-white/10 bg-void-dark shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden z-10"
+                            >
+                                  <Image 
+                                    src={coverUrl} 
+                                    alt="" 
+                                    fill 
+                                    className="object-cover" 
+                                    priority 
+                                  />
+                                <div className="absolute inset-0 rounded-full ring-1 ring-inset ring-white/10" />
+                            </motion.div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-void-deep/60 to-transparent" />
-                        <div className="absolute inset-0 border-[15px] border-void-deep/20 pointer-events-none" />
-                    </motion.div>
-
-                    <div className="space-y-4 z-10 text-center">
-                        <motion.p 
-                        key={(currentTrack?.id || currentTrack?._id) + '_phase'}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-crimson text-[10px] uppercase tracking-[0.5em] font-bold"
-                        >
-                        {currentTrack?.emotionalPhase?.replace(/_/g, ' ')}
-                        </motion.p>
-                        <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-light text-soft tracking-tight">
-                        {currentTrack?.title}
-                        </h1>
-                        <p className="font-display text-xs sm:text-sm italic text-muted max-w-sm mx-auto leading-relaxed opacity-80 line-clamp-2 md:line-clamp-none">
-                        &quot;{currentTrack?.description}&quot;
-                        </p>
-                    </div>
+                    </AnimatePresence>
                 </div>
+
+
 
                 {/* Lyrics Side Panel */}
                 <motion.div 
                     key={(currentTrack?.id || currentTrack?._id) + '_lyrics'}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="flex-1 w-full max-w-md h-[200px] sm:h-[450px] border-t lg:border-t-0 lg:border-l border-white/5 pt-12 lg:pt-0 lg:pl-20 flex flex-col text-left"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3, duration: 1 }}
+                    className="flex-1 w-full max-w-md h-full min-h-0 lg:border-l border-white/5 lg:pl-24 flex flex-col text-left"
                 >
-                    <div className="mb-8 flex items-center gap-3">
-                        <Music size={14} className="text-crimson" />
-                        <h2 className="text-[10px] uppercase tracking-[0.4em] text-muted">Transmission_Lyrics</h2>
+                    <div className="mb-12 flex items-center gap-4">
+                        <div className="h-px w-8 bg-crimson/30" />
+                        <h2 className="text-[9px] uppercase tracking-[0.6em] text-muted/40 font-semibold">Transmission</h2>
                     </div>
                     <div 
                         ref={lyricsContainerRef}
-                        className="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-4 font-display text-lg sm:text-xl italic text-soft/40 leading-relaxed scroll-smooth"
+                        className="flex-1 overflow-y-auto custom-scrollbar pr-6 space-y-4 font-classic text-lg md:text-xl text-soft/40 leading-relaxed scroll-smooth"
                     >
-                        {((currentTrack?.syncedLyrics && currentTrack.syncedLyrics.length > 0) ? currentTrack.syncedLyrics : currentTrack?.ritualText || []).map((line: any, i: number) => {
-                            const isString = typeof line === 'string';
-                            const text = isString ? line : (line as LyricLine).text;
-                            const isActive = activeLyric === line;
+                        {(currentTrack?.ritualText || []).map((line: string, i: number) => {
+                            if (!line) return null;
+                            const isTechnical = line.startsWith('[');
                             
                             return (
                                 <p 
                                     key={i} 
-                                    ref={isActive ? activeLyricRef : null}
-                                    className={
-                                        isActive 
-                                        ? 'text-soft text-3xl not-italic scale-105 transition-all duration-700 origin-left opacity-100' 
-                                        : isString && line.startsWith('[')
-                                        ? 'text-crimson/50 text-xs font-terminal uppercase not-italic tracking-[0.2em] mt-8 mb-4 border-b border-crimson/10 pb-2' 
-                                        : 'hover:text-soft transition-colors cursor-default'
-                                    }
+                                    className={`transition-all duration-700 ${
+                                        isTechnical
+                                        ? 'text-crimson/40 text-[9px] font-sans uppercase tracking-[0.4em] pt-8' 
+                                        : 'hover:text-soft/80 cursor-default'
+                                    }`}
                                 >
-                                    {text}
+                                    {line}
                                 </p>
                             );
                         })}
@@ -282,65 +229,130 @@ export default function VoidPlayer() {
       )}
 
         {/* ─── CONTROLS: BOTTOM BAR ─── */}
-        <footer className="h-40 sm:h-32 border-t border-white/5 bg-void-dark/40 backdrop-blur-2xl px-6 sm:px-12 flex flex-col sm:row items-center justify-center gap-6 sm:gap-12 relative z-20">
-             <div className="w-full sm:flex-1 flex items-center gap-4 sm:gap-8">
-                <div className="flex items-center gap-2 sm:gap-4">
-                  <button 
-                    onClick={prevTrack} 
-                    className="text-muted/80 hover:text-crimson transition-colors p-3 min-w-[44px] min-h-[44px] flex items-center justify-center"
-                    aria-label="Previous ritual"
-                  >
-                    <SkipBack size={18} />
-                  </button>
+        <footer className={`h-40 sm:h-32 border-t border-white/5 bg-void-dark/40 backdrop-blur-3xl px-6 sm:px-12 flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-10 relative z-20 transition-all duration-500`}>
+             {/* Track Info */}
+             <div className={`hidden ${showSidebar ? 'xl:flex' : 'lg:flex'} flex-col items-start min-w-[160px] max-w-[240px]`}>
+                <p className="text-crimson text-[7px] uppercase tracking-[0.5em] font-semibold mb-1">Current_Ritual</p>
+                <h2 className="font-display text-lg text-soft tracking-tight truncate w-full group-hover:text-crimson transition-colors duration-500 italic">
+                  {currentTrack?.title}
+                </h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-[7px] text-muted/40 uppercase tracking-[0.2em] font-medium italic">{currentTrack?.emotionalPhase?.replace(/_/g, ' ')}</span>
+                </div>
+             </div>
+
+             <div className="w-full sm:flex-1 flex flex-col sm:flex-row items-center gap-6 sm:gap-10">
+                <div className="flex items-center gap-6">
+                  <button onClick={prevTrack} className="text-muted/30 hover:text-crimson transition-all"><SkipBack size={14} /></button>
                   <button 
                     onClick={togglePlay}
-                    className="h-12 w-12 sm:h-14 sm:w-14 rounded-full border border-crimson/30 flex items-center justify-center hover:bg-crimson/10 hover:border-crimson transition-all text-crimson shadow-[0_0_15px_rgba(192,0,63,0.2)]"
-                    aria-label={isPlaying ? "Pause" : "Play"}
+                    className="h-12 w-12 sm:h-14 sm:w-14 rounded-full border border-crimson/20 flex items-center justify-center hover:border-crimson transition-all text-crimson bg-crimson/5"
                   >
-                    {isPlaying ? <Pause size={22} fill="currentColor" /> : <Play size={22} fill="currentColor" className="ml-1" />}
+                    {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-1" />}
                   </button>
-                  <button 
-                    onClick={nextTrack} 
-                    className="text-muted/80 hover:text-crimson transition-colors p-3 min-w-[44px] min-h-[44px] flex items-center justify-center"
-                    aria-label="Next ritual"
-                  >
-                    <SkipForward size={18} />
-                  </button>
+                  <button onClick={nextTrack} className="text-muted/30 hover:text-crimson transition-all"><SkipForward size={14} /></button>
                 </div>
 
-                <div className="flex-1 space-y-2">
-                   <div className="flex justify-between text-[9px] uppercase tracking-widest text-muted">
+                <div className="w-full sm:flex-1 flex flex-col gap-3">
+                   <div className="flex justify-between text-[8px] uppercase tracking-[0.5em] text-muted/40 font-terminal">
                       <span>{formatTime(currentTime)}</span>
                       <span>{formatTime(duration)}</span>
                    </div>
-                   <div className="relative h-1 bg-white/5 rounded-full overflow-hidden">
+                   <div className="relative h-px bg-white/5 overflow-hidden group">
                       <div 
-                        className="h-full bg-crimson shadow-[0_0_10px_#c0003f] transition-all duration-100 ease-linear" 
+                        className="h-full bg-crimson transition-all duration-100 shadow-[0_0_8px_rgba(192,0,63,0.6)]" 
                         style={{ width: `${progress}%` }} 
                       />
                       <input 
-                        type="range" 
-                        min="0" max="100" 
-                        value={progress} 
-                        onChange={handleSeek}
+                        type="range" min="0" max="100" value={progress} onChange={handleSeek}
                         className="absolute inset-0 opacity-0 cursor-pointer w-full"
-                        aria-label="Seek ritual"
                       />
                    </div>
                 </div>
              </div>
 
-             <div className="flex items-center gap-6 border-l border-white/5 pl-12 h-16">
-                <div className="hidden lg:block text-right">
-                   <p className="text-[8px] uppercase text-muted tracking-widest mb-1">Live_Waveform_Sync</p>
-                   <div className="flex items-center gap-2 justify-end">
-                      <Shield size={10} className="text-crimson/40" />
-                      <span className="text-[8px] uppercase text-crimson/40 italic">OSCILLOSCOPE_ACTIVE</span>
-                   </div>
-                </div>
-             </div>
+              <div className="flex items-center gap-4 sm:gap-8">
+                 <div className="hidden md:flex flex-col items-end gap-2">
+                    <span className="text-[7px] uppercase tracking-[0.5em] text-muted/20">Display_Config</span>
+                    <div className="flex gap-1.5">
+                      <button
+                        onClick={() => setShowSidebar(!showSidebar)}
+                        className={`text-[7px] px-2 py-1 border transition-all uppercase tracking-widest ${showSidebar ? 'bg-crimson border-crimson text-black font-bold' : 'border-white/5 text-muted/40 hover:border-crimson/20'}`}
+                      >
+                        {showSidebar ? 'QUEUE_ACTIVE' : 'SHOW_QUEUE'}
+                      </button>
+                      <button
+                        onClick={() => setShowCoverArt(!showCoverArt)}
+                        className={`text-[7px] px-2 py-1 border transition-all uppercase tracking-widest ${!showCoverArt ? 'bg-crimson border-crimson text-black font-bold' : 'border-white/5 text-muted/40 hover:border-crimson/20'}`}
+                      >
+                        {showCoverArt ? 'GALLERY' : 'FOCUS'}
+                      </button>
+                      <button
+                        onClick={() => setIsFullScreen(true)}
+                        className="text-[7px] px-2 py-1 border border-white/5 text-muted/40 hover:border-crimson/20 transition-all uppercase tracking-widest flex items-center gap-2"
+                      >
+                        <Maximize2 size={8} />
+                        FULL
+                      </button>
+                    </div>
+                 </div>
+              </div>
         </footer>
       </main>
+
+      {/* ─── FULLSCREEN VISUALIZER OVERLAY ─── */}
+      <AnimatePresence>
+        {isFullScreen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-void-deep flex items-center justify-center p-12 overflow-hidden"
+          >
+            <div className="mesh-gradient opacity-30" />
+            
+            <div className="w-full h-full max-w-5xl max-h-[85vh] relative group flex items-center justify-center">
+              <Visualizer data={frequencyData} imageUrl={coverUrl} color={
+                  currentTrack?.primaryColor || 
+                  currentTrack?.vibrantColor || 
+                  currentTrack?.darkVibrantColor || 
+                  currentTrack?.lightVibrantColor || 
+                  currentTrack?.secondaryColor || 
+                  currentTrack?.mutedColor
+              } />
+              
+              {/* Cover Art in Center Circle */}
+              {currentTrack?.coverImage && (
+                 <div className="absolute w-[44%] aspect-square rounded-full overflow-hidden z-0 shadow-[0_0_100px_rgba(0,0,0,0.8)] border border-white/10">
+                    <div className="relative w-full h-full">
+                        <Image 
+                            src={coverUrl || ''} 
+                            alt="" 
+                            fill 
+                            className="object-cover" 
+                        />
+                    </div>
+                 </div>
+              )}
+              
+              {/* Exit Button */}
+              <button
+                onClick={() => setIsFullScreen(false)}
+                className="absolute top-0 right-0 p-8 text-muted/20 hover:text-crimson transition-all z-50 group-hover:opacity-100 opacity-0"
+              >
+                <Minimize2 size={24} strokeWidth={1} />
+              </button>
+            </div>
+
+            {/* Corner Decorative Elements */}
+            {/* Corner Decorative Elements - Full Screen */}
+            <div className="absolute top-8 left-8 w-16 h-16 border-t-2 border-l-2 border-crimson/30" />
+            <div className="absolute top-8 right-8 w-16 h-16 border-t-2 border-r-2 border-crimson/30" />
+            <div className="absolute bottom-8 left-8 w-16 h-16 border-b-2 border-l-2 border-crimson/30" />
+            <div className="absolute bottom-8 right-8 w-16 h-16 border-b-2 border-r-2 border-crimson/30" />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
