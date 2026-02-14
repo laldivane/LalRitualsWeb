@@ -33,11 +33,9 @@ export default defineType({
     }),
     defineField({
       name: 'coverImage',
-      title: 'Cover Image',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
+      title: 'Cover Image (URL)',
+      type: 'string',
+      description: 'Public URL or Data URI for the ritual cover image',
     }),
     defineField({
       name: 'emotionalPhase',

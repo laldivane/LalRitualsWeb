@@ -42,6 +42,7 @@ async function migrate() {
       slug: { _type: 'slug', current: ritual.slug },
       releaseDate: ritual.releaseDate,
       description: ritual.description,
+      coverImage: ritual.coverImage,
       emotionalPhase: ritual.emotionalPhase,
       audioUrl: ritual.audioUrl,
       ritualText: ritual.ritualText,
