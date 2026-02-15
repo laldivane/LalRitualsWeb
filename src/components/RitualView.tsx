@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 export default function RitualView({ ritual }: { ritual: Ritual }) {
+  const coverSrc = typeof ritual.coverImage === 'string' ? ritual.coverImage : '/placeholder.png';
   const formattedDate = new Date(ritual.releaseDate).toLocaleDateString('en-US', { 
     year: 'numeric', 
     month: 'long', 
@@ -18,7 +19,7 @@ export default function RitualView({ ritual }: { ritual: Ritual }) {
       {/* Cinematic Background Blur */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <Image
-          src={ritual.coverImage}
+          src={coverSrc}
           alt={`Atmospheric background for ${ritual.title}`}
           fill
           className="object-cover opacity-10 scale-125 blur-[120px]"
@@ -64,7 +65,7 @@ export default function RitualView({ ritual }: { ritual: Ritual }) {
             className="relative w-full max-w-[540px] aspect-square border border-white/5 overflow-hidden bg-void-deep shadow-[0_50px_100px_-20px_rgba(0,0,0,0.7)] group"
           >
               <Image
-                  src={ritual.coverImage}
+                  src={coverSrc}
                   alt={ritual.title}
                   fill
                   className="object-cover transition-transform duration-2000 group-hover:scale-110"
