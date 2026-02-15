@@ -75,7 +75,7 @@ export default function RitualPlayer({ ritual }: RitualPlayerProps) {
       className="w-full max-w-3xl border border-white/5 bg-void-card/60 backdrop-blur-2xl p-8 md:p-12 relative overflow-hidden group shadow-2xl"
     >
       <div className="absolute top-0 right-0 p-4 font-terminal text-[8px] text-muted/20 select-none group-hover:text-crimson/20 transition-colors">
-        DECRYPTING_SIGNAL_0X{ritual.id.split('-')[1]}...
+        DECRYPTING_SIGNAL_0X{(ritual.id ?? ritual._id ?? 'unknown').split('-').pop() ?? '0000'}...
       </div>
       
       <audio

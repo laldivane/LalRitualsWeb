@@ -53,6 +53,13 @@ export default function VoidPlayer() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  /* Manual Color Overrides */
+  const MANUAL_COLOR_OVERRIDES: Record<string, string> = {
+    'zehir': '#87e8a8', // Brightest green from the provided palette
+    'hatalarım': '#ccad73', // Gold/Beige from the provided palette
+    'hatalarim': '#ccad73'
+  };
+
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
     const seekTime = (Number(e.target.value) / 100) * duration;
     seek(seekTime);
@@ -62,6 +69,25 @@ export default function VoidPlayer() {
   const coverUrl = currentTrack?.coverImage 
     ? (typeof currentTrack.coverImage === 'string' ? currentTrack.coverImage : urlForImage(currentTrack.coverImage).url()) 
     : undefined;
+
+  /* Helper to resolve color */
+  const getActiveColor = () => {
+      if (!currentTrack) return undefined;
+      
+      const lowerTitle = currentTrack.title.toLowerCase();
+      for (const [key, color] of Object.entries(MANUAL_COLOR_OVERRIDES)) {
+          if (lowerTitle.includes(key)) return color;
+      }
+
+      return currentTrack.primaryColor || 
+             currentTrack.vibrantColor || 
+             currentTrack.darkVibrantColor || 
+             currentTrack.lightVibrantColor || 
+             currentTrack.secondaryColor || 
+             currentTrack.mutedColor;
+  };
+
+  const activeColor = getActiveColor();
 
   return (
     <div className="flex flex-col lg:flex-row h-full w-full bg-void-deep text-soft overflow-hidden font-sans">
@@ -152,14 +178,7 @@ export default function VoidPlayer() {
                 <div className="flex flex-col items-center w-full max-w-[400px] aspect-square relative justify-center group">
                     {/* Visualizer Background */}
                     <div className="absolute inset-[-10%] pointer-events-none z-0 opacity-80">
-                        {isMounted && <Visualizer data={frequencyData} imageUrl={coverUrl} color={
-                            currentTrack?.primaryColor || 
-                            currentTrack?.vibrantColor || 
-                            currentTrack?.darkVibrantColor || 
-                            currentTrack?.lightVibrantColor || 
-                            currentTrack?.secondaryColor || 
-                            currentTrack?.mutedColor
-                        } />}
+                        {isMounted && <Visualizer data={frequencyData} imageUrl={coverUrl} color={activeColor} />}
                     </div>
 
                     {/* Circular Cover Art */}
@@ -312,14 +331,7 @@ export default function VoidPlayer() {
             <div className="mesh-gradient opacity-30" />
             
             <div className="w-full h-full max-w-5xl max-h-[85vh] relative group flex items-center justify-center">
-              <Visualizer data={frequencyData} imageUrl={coverUrl} color={
-                  currentTrack?.primaryColor || 
-                  currentTrack?.vibrantColor || 
-                  currentTrack?.darkVibrantColor || 
-                  currentTrack?.lightVibrantColor || 
-                  currentTrack?.secondaryColor || 
-                  currentTrack?.mutedColor
-              } />
+              <Visualizer data={frequencyData} imageUrl={coverUrl} color={activeColor} />
               
               {/* Cover Art in Center Circle */}
               {currentTrack?.coverImage && (
