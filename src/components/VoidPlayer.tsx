@@ -107,9 +107,9 @@ export default function VoidPlayer() {
               <div className="mb-10 flex items-center justify-between px-2">
                 <div className="flex items-center gap-3">
                   <div className="w-1.5 h-1.5 bg-crimson rounded-full animate-pulse" />
-                  <h2 className="text-[9px] uppercase tracking-[0.6em] text-muted font-semibold">Queue</h2>
+                  <h2 className="text-[10px] uppercase tracking-[0.6em] text-muted font-semibold">Queue</h2>
                 </div>
-                <span className="text-[8px] text-crimson/30 font-terminal tracking-wider">[{rituals.length}]</span>
+                <span className="text-[9px] text-crimson/50 font-terminal tracking-wider">[{rituals.length}]</span>
               </div>
               
               <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar -mr-4">
@@ -139,22 +139,22 @@ export default function VoidPlayer() {
                     </div>
 
                     <div className="flex-1 overflow-hidden">
-                      <p className={`text-[10px] truncate uppercase tracking-[0.2em] font-medium transition-colors duration-500 ${currentTrackIndex === index ? 'text-crimson' : 'text-soft/60 group-hover:text-soft'}`}>
+                      <p className={`text-[11px] truncate uppercase tracking-[0.2em] font-medium transition-colors duration-500 ${currentTrackIndex === index ? 'text-crimson' : 'text-soft/70 group-hover:text-soft'}`}>
                         {ritual.title}
                       </p>
-                      <p className="text-[7px] text-muted/40 uppercase tracking-widest mt-1">{ritual.emotionalPhase?.replace(/_/g, ' ')}</p>
+                      <p className="text-[8px] text-muted/60 uppercase tracking-widest mt-1">{ritual.emotionalPhase?.replace(/_/g, ' ')}</p>
                     </div>
                   </button>
                 ))}
               </div>
 
               <div className="mt-8 pt-8 border-t border-white/5 space-y-6">
-                 <Link href="/rituals" className="flex items-center gap-3 text-[8px] text-muted/40 hover:text-crimson transition-all tracking-[0.4em] uppercase group">
+                 <Link href="/rituals" className="flex items-center gap-3 text-[9px] text-muted/60 hover:text-crimson transition-all tracking-[0.4em] uppercase group">
                     <Hash size={10} className="group-hover:rotate-90 transition-transform duration-500" />
                     Return_To_Base
                  </Link>
                  <div className="p-4 bg-crimson/[0.02] border border-crimson/10">
-                    <p className="text-[7px] text-crimson/50 leading-relaxed uppercase tracking-[0.2em]">
+                    <p className="text-[8px] text-crimson/60 leading-relaxed uppercase tracking-[0.2em]">
                       System_Status: Stable<br/>Connect: Encrypted<br/>Node: 0xLAL_DIVANE
                     </p>
                  </div>
@@ -172,10 +172,10 @@ export default function VoidPlayer() {
           </div>
         ) : (
           <>
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8 lg:p-24 text-center overflow-hidden">
-            <div className="flex flex-col lg:flex-row w-full h-full items-center justify-center gap-16 lg:gap-32">
+        <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-4 sm:p-8 lg:p-24 text-center overflow-hidden">
+            <div className="flex flex-col lg:flex-row w-full h-full items-center justify-center gap-8 sm:gap-16 lg:gap-32">
                 {/* Art & Info */}
-                <div className="flex flex-col items-center w-full max-w-[400px] aspect-square relative justify-center group">
+                <div className="flex flex-col items-center w-full max-w-[260px] sm:max-w-[340px] lg:max-w-[400px] aspect-square relative justify-center group">
                     {/* Visualizer Background */}
                     <div className="absolute inset-[-10%] pointer-events-none z-0 opacity-80">
                         {isMounted && <Visualizer data={frequencyData} imageUrl={coverUrl} color={activeColor} />}
@@ -215,13 +215,13 @@ export default function VoidPlayer() {
                     transition={{ delay: 0.3, duration: 1 }}
                     className="flex-1 w-full max-w-md h-full min-h-0 lg:border-l border-white/5 lg:pl-24 flex flex-col text-left"
                 >
-                    <div className="mb-12 flex items-center gap-4">
+                    <div className="mb-6 sm:mb-12 flex items-center gap-4">
                         <div className="h-px w-8 bg-crimson/30" />
-                        <h2 className="text-[9px] uppercase tracking-[0.6em] text-muted/40 font-semibold">Transmission</h2>
+                        <h2 className="text-[10px] uppercase tracking-[0.6em] text-muted/60 font-semibold">Transmission</h2>
                     </div>
                     <div 
                         ref={lyricsContainerRef}
-                        className="flex-1 overflow-y-auto custom-scrollbar pr-6 space-y-4 font-classic text-lg md:text-xl text-soft/40 leading-relaxed scroll-smooth"
+                        className="flex-1 overflow-y-auto custom-scrollbar pr-4 sm:pr-6 space-y-3 sm:space-y-4 font-classic text-base sm:text-lg md:text-xl text-soft/60 leading-relaxed scroll-smooth"
                     >
                         {(currentTrack?.ritualText || []).map((line: string, i: number) => {
                             if (!line) return null;
@@ -232,8 +232,8 @@ export default function VoidPlayer() {
                                     key={i} 
                                     className={`transition-all duration-700 ${
                                         isTechnical
-                                        ? 'text-crimson/40 text-[9px] font-sans uppercase tracking-[0.4em] pt-8' 
-                                        : 'hover:text-soft/80 cursor-default'
+                                        ? 'text-crimson/60 text-[10px] font-sans uppercase tracking-[0.4em] pt-6 sm:pt-8' 
+                                        : 'hover:text-soft/90 cursor-default'
                                     }`}
                                 >
                                     {line}
@@ -248,67 +248,77 @@ export default function VoidPlayer() {
       )}
 
         {/* ─── CONTROLS: BOTTOM BAR ─── */}
-        <footer className={`h-40 sm:h-32 border-t border-white/5 bg-void-dark/40 backdrop-blur-3xl px-6 sm:px-12 flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-10 relative z-20 transition-all duration-500`}>
+        <footer className={`min-h-[120px] sm:min-h-[128px] border-t border-white/5 bg-void-dark/60 backdrop-blur-3xl px-4 sm:px-8 lg:px-12 py-4 sm:py-0 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-10 relative z-20 transition-all duration-500`}>
              {/* Track Info */}
              <div className={`hidden ${showSidebar ? 'xl:flex' : 'lg:flex'} flex-col items-start min-w-[160px] max-w-[240px]`}>
-                <p className="text-crimson text-[7px] uppercase tracking-[0.5em] font-semibold mb-1">Current_Ritual</p>
+                <p className="text-crimson text-[8px] uppercase tracking-[0.5em] font-semibold mb-1">Current_Ritual</p>
                 <h2 className="font-display text-lg text-soft tracking-tight truncate w-full group-hover:text-crimson transition-colors duration-500 italic">
                   {currentTrack?.title}
                 </h2>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[7px] text-muted/40 uppercase tracking-[0.2em] font-medium italic">{currentTrack?.emotionalPhase?.replace(/_/g, ' ')}</span>
+                  <span className="text-[8px] text-muted/60 uppercase tracking-[0.2em] font-medium italic">{currentTrack?.emotionalPhase?.replace(/_/g, ' ')}</span>
                 </div>
              </div>
 
-             <div className="w-full sm:flex-1 flex flex-col sm:flex-row items-center gap-6 sm:gap-10">
-                <div className="flex items-center gap-6">
-                  <button onClick={prevTrack} className="text-muted/30 hover:text-crimson transition-all"><SkipBack size={14} /></button>
+             <div className="w-full sm:flex-1 flex flex-col sm:flex-row items-center gap-4 sm:gap-10">
+                <div className="flex items-center gap-8 sm:gap-6">
+                  <button onClick={prevTrack} className="text-muted/50 hover:text-crimson transition-all active:scale-90"><SkipBack size={18} className="sm:w-3.5 sm:h-3.5" /></button>
                   <button 
                     onClick={togglePlay}
-                    className="h-12 w-12 sm:h-14 sm:w-14 rounded-full border border-crimson/20 flex items-center justify-center hover:border-crimson transition-all text-crimson bg-crimson/5"
+                    className="h-14 w-14 sm:h-14 sm:w-14 rounded-full border border-crimson/30 flex items-center justify-center hover:border-crimson transition-all text-crimson bg-crimson/5 active:scale-95"
                   >
-                    {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-1" />}
+                    {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-1" />}
                   </button>
-                  <button onClick={nextTrack} className="text-muted/30 hover:text-crimson transition-all"><SkipForward size={14} /></button>
+                  <button onClick={nextTrack} className="text-muted/50 hover:text-crimson transition-all active:scale-90"><SkipForward size={18} className="sm:w-3.5 sm:h-3.5" /></button>
                 </div>
 
                 <div className="w-full sm:flex-1 flex flex-col gap-3">
-                   <div className="flex justify-between text-[8px] uppercase tracking-[0.5em] text-muted/40 font-terminal">
+                   <div className="flex justify-between text-[10px] sm:text-[8px] uppercase tracking-[0.3em] sm:tracking-[0.5em] text-muted/70 font-terminal">
                       <span>{formatTime(currentTime)}</span>
                       <span>{formatTime(duration)}</span>
                    </div>
-                   <div className="relative h-px bg-white/5 overflow-hidden group">
+                   <div className="relative h-1 sm:h-px bg-white/10 overflow-hidden group rounded-full">
                       <div 
                         className="h-full bg-crimson transition-all duration-100 shadow-[0_0_8px_rgba(192,0,63,0.6)]" 
                         style={{ width: `${progress}%` }} 
                       />
                       <input 
                         type="range" min="0" max="100" value={progress} onChange={handleSeek}
-                        className="absolute inset-0 opacity-0 cursor-pointer w-full"
+                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-6 -top-2.5"
                       />
                    </div>
                 </div>
              </div>
 
               <div className="flex items-center gap-4 sm:gap-8">
+                 {/* Mobile: compact fullscreen button */}
+                 <button
+                   onClick={() => setIsFullScreen(true)}
+                   className="md:hidden text-muted/50 hover:text-crimson transition-all p-2"
+                   aria-label="Fullscreen"
+                 >
+                   <Maximize2 size={18} />
+                 </button>
+
+                 {/* Desktop: full config panel */}
                  <div className="hidden md:flex flex-col items-end gap-2">
-                    <span className="text-[7px] uppercase tracking-[0.5em] text-muted/20">Display_Config</span>
+                    <span className="text-[8px] uppercase tracking-[0.5em] text-muted/40">Display_Config</span>
                     <div className="flex gap-1.5">
                       <button
                         onClick={() => setShowSidebar(!showSidebar)}
-                        className={`text-[7px] px-2 py-1 border transition-all uppercase tracking-widest ${showSidebar ? 'bg-crimson border-crimson text-black font-bold' : 'border-white/5 text-muted/40 hover:border-crimson/20'}`}
+                        className={`text-[8px] px-2 py-1 border transition-all uppercase tracking-widest ${showSidebar ? 'bg-crimson border-crimson text-black font-bold' : 'border-white/5 text-muted/50 hover:border-crimson/20'}`}
                       >
                         {showSidebar ? 'QUEUE_ACTIVE' : 'SHOW_QUEUE'}
                       </button>
                       <button
                         onClick={() => setShowCoverArt(!showCoverArt)}
-                        className={`text-[7px] px-2 py-1 border transition-all uppercase tracking-widest ${!showCoverArt ? 'bg-crimson border-crimson text-black font-bold' : 'border-white/5 text-muted/40 hover:border-crimson/20'}`}
+                        className={`text-[8px] px-2 py-1 border transition-all uppercase tracking-widest ${!showCoverArt ? 'bg-crimson border-crimson text-black font-bold' : 'border-white/5 text-muted/50 hover:border-crimson/20'}`}
                       >
                         {showCoverArt ? 'GALLERY' : 'FOCUS'}
                       </button>
                       <button
                         onClick={() => setIsFullScreen(true)}
-                        className="text-[7px] px-2 py-1 border border-white/5 text-muted/40 hover:border-crimson/20 transition-all uppercase tracking-widest flex items-center gap-2"
+                        className="text-[8px] px-2 py-1 border border-white/5 text-muted/50 hover:border-crimson/20 transition-all uppercase tracking-widest flex items-center gap-2"
                       >
                         <Maximize2 size={8} />
                         FULL

@@ -100,7 +100,7 @@ export default function RitualPlayer({ ritual }: RitualPlayerProps) {
                transition={{ duration: 2, repeat: Infinity }}
                className="h-2 w-2 rounded-full bg-crimson" 
              />
-             <span className="font-terminal text-[10px] uppercase tracking-[0.3em] text-soft">
+             <span className="font-terminal text-[10px] uppercase tracking-[0.3em] text-soft/90">
                STATUS: {isPlaying ? 'EMITTING' : 'IDLE'}
              </span>
           </div>
@@ -111,13 +111,13 @@ export default function RitualPlayer({ ritual }: RitualPlayerProps) {
         
         <div className="text-right hidden sm:block">
            <Volume2 size={12} className="text-muted/40 mb-2 ml-auto" />
-           <span className="font-terminal text-[9px] uppercase tracking-tighter text-muted/30">
+           <span className="font-terminal text-[9px] uppercase tracking-tighter text-muted/60">
              Frequency_Locked_Secure
            </span>
         </div>
       </div>
 
-      <div className="mb-10 h-14 flex items-end justify-center gap-1.5 opacity-40">
+      <div className="mb-8 sm:mb-10 h-10 sm:h-14 flex items-end justify-center gap-1 sm:gap-1.5 opacity-60">
         {bars.map((v, i) => (
           <motion.div 
             key={i}
@@ -135,8 +135,8 @@ export default function RitualPlayer({ ritual }: RitualPlayerProps) {
         ))}
       </div>
 
-      <div className="flex flex-col gap-8">
-        <div className="flex items-center gap-8">
+      <div className="flex flex-col gap-6 sm:gap-8">
+        <div className="flex items-center gap-6 sm:gap-8">
           <button 
             onClick={togglePlay}
             className="relative flex h-16 w-16 items-center justify-center rounded-full border border-crimson/30 hover:border-crimson hover:bg-crimson/10 transition-all duration-500 group/btn"
@@ -161,8 +161,8 @@ export default function RitualPlayer({ ritual }: RitualPlayerProps) {
           </button>
 
           <div className="flex-1 space-y-3">
-             <div className="flex justify-between font-terminal text-[10px] tracking-widest text-muted/60">
-                <span className="text-crimson/80 uppercase">Deciphering_Data...</span>
+             <div className="flex justify-between font-terminal text-[10px] tracking-widest text-muted/80">
+                <span className="text-crimson uppercase">Deciphering_Data...</span>
                 <span>{formatTime(audioRef.current?.currentTime || 0)} / {formatTime(duration)}</span>
              </div>
              
@@ -173,7 +173,7 @@ export default function RitualPlayer({ ritual }: RitualPlayerProps) {
                   max="100"
                   value={progress}
                   onChange={handleSeek}
-                  className="absolute inset-x-0 -top-1 z-30 w-full h-4 opacity-0 cursor-pointer"
+                  className="absolute inset-x-0 -top-2 z-30 w-full h-8 opacity-0 cursor-pointer touch-none"
                   aria-label="Seek transmission"
                 />
                 <div className="h-2 w-full bg-black/40 border border-white/5 rounded-full overflow-hidden relative">
@@ -189,14 +189,14 @@ export default function RitualPlayer({ ritual }: RitualPlayerProps) {
         <div className="flex justify-between items-center pt-8 border-t border-white/5">
            <div className="flex items-center gap-4">
               <Shield size={10} className="text-crimson/40" />
-              <span className="font-terminal text-[8px] uppercase tracking-widest text-muted/40 hover:text-muted/80 transition-colors cursor-default">
+              <span className="font-terminal text-[8px] uppercase tracking-widest text-muted/60 hover:text-muted/90 transition-colors cursor-default">
                 Source: Encrypted_GitHub_Storage
               </span>
            </div>
            
-           <button className="font-terminal text-[9px] uppercase tracking-[0.2em] text-muted/40 hover:text-crimson transition-all border-b border-white/10 hover:border-crimson pb-1 px-1">
-             Download_Fragment
-           </button>
+            <button className="font-terminal text-[9px] uppercase tracking-[0.2em] text-muted/60 hover:text-crimson transition-all border-b border-white/10 hover:border-crimson pb-1 px-1">
+              Download_Fragment
+            </button>
         </div>
       </div>
     </motion.div>
