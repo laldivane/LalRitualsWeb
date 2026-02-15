@@ -193,7 +193,7 @@ export default function VoidPlayer() {
                                 className="relative w-[46%] aspect-square rounded-full border border-white/10 bg-void-dark shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden z-10"
                             >
                                   <Image 
-                                    src={coverUrl} 
+                                    src={coverUrl || ''} 
                                     alt="" 
                                     fill 
                                     className="object-cover" 
