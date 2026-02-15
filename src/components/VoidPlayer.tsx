@@ -13,6 +13,15 @@ import Visualizer from './Visualizer';
 export default function VoidPlayer() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile(); // Check on mount
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const {
     rituals,
     currentTrackIndex,
@@ -92,18 +101,24 @@ export default function VoidPlayer() {
   return (
     <div className="flex flex-col lg:flex-row h-full w-full bg-void-deep text-soft overflow-hidden font-sans">
       <div className="mesh-gradient opacity-10" />
-      
+
       {/* ─── SIDEBAR: TRACK LIST ─── */}
       <AnimatePresence initial={false}>
         {showSidebar && (
           <motion.aside 
             initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 320, opacity: 1 }}
+            animate={{ width: isMobile ? "100%" : 320, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="hidden lg:flex border-r border-white/5 bg-void-dark/20 backdrop-blur-xl flex-col overflow-hidden"
+            className="fixed inset-0 z-50 lg:static lg:z-auto lg:flex border-r border-white/5 bg-void-deep/95 lg:bg-void-dark/20 backdrop-blur-3xl lg:backdrop-blur-xl flex-col overflow-hidden"
           >
-            <div className="w-80 h-full flex flex-col p-8">
+            <div className="w-full lg:w-80 h-full flex flex-col p-8 relative">
+              <button 
+                onClick={() => setShowSidebar(false)}
+                className="lg:hidden absolute top-6 right-6 p-2 text-muted/50 hover:text-crimson transition-colors"
+              >
+                <Minimize2 size={20} />
+              </button>
               <div className="mb-10 flex items-center justify-between px-2">
                 <div className="flex items-center gap-3">
                   <div className="w-1.5 h-1.5 bg-crimson rounded-full animate-pulse" />
